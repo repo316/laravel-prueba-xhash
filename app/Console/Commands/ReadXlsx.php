@@ -59,15 +59,15 @@ class ReadXlsx extends Command{
                 }
 
                 $municipality=Municipality::query()->where(function($query) use ($collect){
-                    $query->where('key_data', '=', $this->cleanValues($collect[7]));
-                    $query->where('name', '=', $this->cleanValues($collect[5]));
+                    $query->where('key_data', '=', $this->cleanValues($collect[11]));
+                    $query->where('name', '=', $this->cleanValues($collect[3]));
                     $query->where('status', '=', 'Active');
                 })->first();
 
                 if(!$municipality){
                     $idMunicipality=Municipality::create([
-                        'key_data'=>$this->cleanValues($collect[7]),
-                        'name'=>$this->cleanValues($collect[5]),
+                        'key_data'=>$this->cleanValues($collect[11]),
+                        'name'=>$this->cleanValues($collect[3]),
                         'status'=>'Active',
                     ])->id;
                 }

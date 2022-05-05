@@ -24,7 +24,7 @@ class ZipCodeController extends Controller{
             $result=array();
             if($master){
                 $result['zip_code']=$master->zip_code;
-                $result['locality']=$master->locality;
+                $result['locality']=Str::upper($master->locality);
 
                 $federalEntity=FederalEntity::query()->where('id', '=', $master->fk_id_federal_entity)->first([
                     'key_data as key',
@@ -52,13 +52,14 @@ class ZipCodeController extends Controller{
                 if($settlements){
                     foreach($settlements as $settlement){
                         $name=$settlement->settlement_type;
+                        $settlement->name = Str::upper($settlement->name);
                         $settlement->settlement_type = new \stdClass();
                         $settlement->settlement_type->name=$name;
                     }
                     $result['settlements']=$settlements;
                 }
 
-                $municipality=Municipality::query()->where('id', '=', $master->fk_id_federal_entity)->first([
+                $municipality=Municipality::query()->where('id', '=', $master->fk_id_municipalities)->first([
                     'key_data as key',
                     'name',
                 ]);
