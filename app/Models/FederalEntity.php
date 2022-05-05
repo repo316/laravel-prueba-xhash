@@ -17,6 +17,6 @@ class FederalEntity extends Model{
 
 
     public function master(){
-        return $this->belongsTo(Master::class);
+        return $this->belongsTo(Master::class,'fk_id_federal_entity');
     }
 }

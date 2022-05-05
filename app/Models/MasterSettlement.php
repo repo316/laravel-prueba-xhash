@@ -13,4 +13,12 @@ class MasterSettlement extends Model{
         'fk_id_settlement',
         'status',
     ];
+
+    public function settlement(){
+        return $this->hasMany(Settlement::class, 'id', 'fk_id_settlement');
+    }
+
+    public function master(){
+        return $this->hasMany(Master::class, 'id', 'fk_id_master');
+    }
 }

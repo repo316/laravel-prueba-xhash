@@ -17,7 +17,7 @@ class Master extends Model{
 
 
     public function federalEntity(){
-        return $this->hasOne(FederalEntity::class);
+        return $this->hasOne(FederalEntity::class,'id');
     }
 
     public function municipality(){

@@ -18,4 +18,8 @@ class Settlement extends Model{
     public function settlementType(){
         return $this->belongsTo(SettlementType::class);
     }
+
+    public function masterXsettlement(){
+        return $this->hasMany(MasterSettlement::class,'fk_id_settlement','id');
+    }
 }
