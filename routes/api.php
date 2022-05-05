@@ -21,4 +21,4 @@ use \App\Http\Controllers\api\ZipCodeController;
 Route::get('/zip-codes/{zipCode}', [
     ZipCodeController::class,
     'fetch'
-])->whereAlphaNumeric('zipCode')->name('Api.ZipCode');
+])->whereNumber('zipCode')->name('Api.ZipCode');
