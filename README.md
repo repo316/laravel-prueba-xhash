@@ -8,3 +8,4 @@ detalles:
 - en la function fetch del ZipCodeController es donde se hace lectura de la bd
 - para la lectura del excel se implementó el package maatwebsite/excel ya que se hace más facil la lectura de estos archivos usando collections.
 - se usaron manejos de try y catch para prevenir errores de queries y de datos no encontrados
+- El servidor está montado en digitalocean siguiendo los pasos de configuracion recomendado.
