@@ -13,6 +13,10 @@ use Illuminate\Support\Str;
 class ZipCodeController extends Controller{
     public function fetch($zipCode){
         $zipCode=trim(ltrim($zipCode, '0'));
+        $result=[
+            'code'=>'00',
+            'message'=>'404 error'
+        ];
         try{
             $master=Master::query()->where('zip_code', '=', $zipCode)->firstOrFail([
                 'id',
@@ -21,9 +25,8 @@ class ZipCodeController extends Controller{
                 'fk_id_federal_entity',
                 'fk_id_municipalities',
             ]);
-            $result=array();
             if($master){
-                $result['zip_code']=$master->zip_code;
+                $result['zip_code']=Str::padLeft($master->zip_code, 5,'0');
                 $result['locality']=Str::upper($master->locality);
 
                 $federalEntity=FederalEntity::query()->where('id', '=', $master->fk_id_federal_entity)->first([
@@ -41,7 +44,7 @@ class ZipCodeController extends Controller{
                     ];
                 }
 
-                $settlements=MasterSettlement::query()->join('masters as m', 'fk_id_master','=','m.id')->where('fk_id_master', '=', $master->id)->join('settlements as s', 'fk_id_settlement','=','s.id')->join('settlement_types as st', 's.fk_id_settlement_type','=','st.id')->get([
+                $settlements=MasterSettlement::query()->join('masters as m', 'fk_id_master', '=', 'm.id')->where('fk_id_master', '=', $master->id)->join('settlements as s', 'fk_id_settlement', '=', 's.id')->join('settlement_types as st', 's.fk_id_settlement_type', '=', 'st.id')->get([
                     's.key_data as key',
                     's.name',
                     's.zone_type',
@@ -52,8 +55,8 @@ class ZipCodeController extends Controller{
                 if($settlements){
                     foreach($settlements as $settlement){
                         $name=$settlement->settlement_type;
-                        $settlement->name = Str::upper($settlement->name);
-                        $settlement->settlement_type = new \stdClass();
+                        $settlement->name=Str::upper($settlement->name);
+                        $settlement->settlement_type=new \stdClass();
                         $settlement->settlement_type->name=$name;
                     }
                     $result['settlements']=$settlements;
@@ -73,20 +76,15 @@ class ZipCodeController extends Controller{
                 }
 
             }
-
-            return response()->json($result);
+            $status=200;
+            unset($result['code']);
+            unset($result['message']);
         }catch(\Illuminate\Database\QueryException $e){
-            return response()->json([
-                'code'=>'00',
-                'message'=>'404 error'
-            ], 404);
+            $status=401;
         }catch(ModelNotFoundException $e){
-            return response()->json([
-                'code'=>'00',
-                'message'=>'404 error'
-            ], 404);
+            $status=404;
         }
 
-
+        return response()->json($result,$status);
     }
 }

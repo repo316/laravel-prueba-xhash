@@ -42,16 +42,16 @@ class ReadXlsx extends Command{
                 if($j==0) continue;
 
                 $federalEntity=FederalEntity::query()->where(function($query) use ($collect){
-                    $query->where('key_data', '=', $this->cleanValues($collect[7]));
-                    $query->where('name', '=', $this->cleanValues($collect[5]));
-                    $query->where('code', '=', $this->cleanValues($collect[9] ?? ''));
+                    $query->where('key_data', '=', CleanValues($collect[7]));
+                    $query->where('name', '=', CleanValues($collect[5]));
+                    $query->where('code', '=', CleanValues($collect[9] ?? ''));
                 })->first();
 
                 if(!$federalEntity){
                     $idFederalEntity=FederalEntity::create([
-                        'key_data'=>$this->cleanValues($collect[7]),
-                        'name'=>$this->cleanValues($collect[5]),
-                        'code'=>$this->cleanValues($collect[9] ?? ''),
+                        'key_data'=>CleanValues($collect[7]),
+                        'name'=>CleanValues($collect[5]),
+                        'code'=>CleanValues($collect[9] ?? ''),
                     ])->id;
                 }
                 else{
@@ -59,15 +59,15 @@ class ReadXlsx extends Command{
                 }
 
                 $municipality=Municipality::query()->where(function($query) use ($collect){
-                    $query->where('key_data', '=', $this->cleanValues($collect[11]));
-                    $query->where('name', '=', $this->cleanValues($collect[3]));
+                    $query->where('key_data', '=', CleanValues($collect[11]));
+                    $query->where('name', '=', CleanValues($collect[3]));
                     $query->where('status', '=', 'Active');
                 })->first();
 
                 if(!$municipality){
                     $idMunicipality=Municipality::create([
-                        'key_data'=>$this->cleanValues($collect[11]),
-                        'name'=>$this->cleanValues($collect[3]),
+                        'key_data'=>CleanValues($collect[11]),
+                        'name'=>CleanValues($collect[3]),
                         'status'=>'Active',
                     ])->id;
                 }
@@ -76,13 +76,13 @@ class ReadXlsx extends Command{
                 }
 
                 $settlementType=SettlementType::query()->where(function($query) use ($collect){
-                    $query->where('name', '=', $this->cleanValues($collect[2]));
+                    $query->where('name', '=', CleanValues($collect[2]));
                     $query->where('status', '=', 'Active');
                 })->first();
 
                 if(!$settlementType){
                     $idSettlementType=SettlementType::create([
-                        'name'=>$this->cleanValues($collect[2]),
+                        'name'=>CleanValues($collect[2]),
                         'status'=>'Active',
                     ])->id;
                 }
@@ -91,17 +91,17 @@ class ReadXlsx extends Command{
                 }
 
                 $settlements=Settlement::query()->where(function($query) use ($collect, $idSettlementType){
-                    $query->where('key_data', '=', $this->cleanValues($collect[12]));
-                    $query->where('name', '=', $this->cleanValues($collect[1]));
-                    $query->where('zone_type', '=', $this->cleanValues($collect[13]));
+                    $query->where('key_data', '=', CleanValues($collect[12]));
+                    $query->where('name', '=', CleanValues($collect[1]));
+                    $query->where('zone_type', '=', CleanValues($collect[13]));
                     $query->where('fk_id_settlement_type', '=', $idSettlementType);
                 })->first();
 
                 if(!$settlements){
                     $idSettlements=Settlement::create([
-                        'key_data'=>$this->cleanValues($collect[12]),
-                        'name'=>$this->cleanValues($collect[1]),
-                        'zone_type'=>$this->cleanValues($collect[13]),
+                        'key_data'=>CleanValues($collect[12]),
+                        'name'=>CleanValues($collect[1]),
+                        'zone_type'=>CleanValues($collect[13]),
                         'fk_id_settlement_type'=>$idSettlementType,
                     ])->id;
                 }
@@ -110,8 +110,8 @@ class ReadXlsx extends Command{
                 }
 
                 $master=Master::query()->where(function($query) use ($collect, $idFederalEntity, $idMunicipality){
-                    $query->where('zip_code', '=', $this->cleanValues($collect[0]));
-                    $query->where('locality', '=', $this->cleanValues($collect[4]));
+                    $query->where('zip_code', '=', CleanValues($collect[0]));
+                    $query->where('locality', '=', CleanValues($collect[4]));
                     $query->where('fk_id_federal_entity', '=', $idFederalEntity);
                     $query->where('fk_id_municipalities', '=', $idMunicipality);
                 })->first();
@@ -119,7 +119,7 @@ class ReadXlsx extends Command{
                 if(!$master){
                     $idMaster=Master::create([
                         'zip_code'=>$collect[0],
-                        'locality'=>$collect[4],
+                        'locality'=>CleanValues($collect[4]),
                         'fk_id_federal_entity'=>$idFederalEntity,
                         'fk_id_municipalities'=>$idMunicipality,
                     ])->id;
@@ -149,8 +149,4 @@ class ReadXlsx extends Command{
         return 0;
     }
 
-    private function cleanValues($value){
-        $value=Str::replace("'", "", $value);
-        return ltrim($value, '0');
-    }
 }
