@@ -40,7 +40,7 @@ class ZipCodeController extends Controller{
                     $result['federal_entity']=[
                         "key"=>$federalEntity->key,
                         "name"=>Str::upper($federalEntity->name),
-                        "code"=>$federalEntity->code
+                        "code"=>!empty($federalEntity->code)?$federalEntity->code:null
                     ];
                 }
 
@@ -54,6 +54,7 @@ class ZipCodeController extends Controller{
                 $result['settlements']=[];
                 if($settlements){
                     foreach($settlements as $settlement){
+                        $settlement->zone_type=Str::upper($settlement->zone_type);
                         $name=$settlement->settlement_type;
                         $settlement->name=Str::upper($settlement->name);
                         $settlement->settlement_type=new \stdClass();
